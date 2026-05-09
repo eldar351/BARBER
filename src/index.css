@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", serif;
+  
+  --color-background: #16111b;
+  --color-surface-lowest: #110c16;
+  --color-surface-low: #1f1924;
+  --color-surface: #231d28;
+  --color-surface-high: #2e2832;
+  --color-surface-highest: #39323d;
+  
+  --color-primary-brand: #dcb8ff;
+  --color-on-primary-brand: #480081;
+  --color-primary-container: #8a2be2;
+  
+  --color-outline-brand: #4c4354;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-[#eadfee] antialiased;
+  }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

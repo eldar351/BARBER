@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // Barbers
+    match /barbers/{barberId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Services
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Appointments
+    match /appointments/{appointmentId} {
+      // Creation is public (for booking)
+      allow create: if isValidAppointment(incoming()) && incoming().status == 'pending';
+      
+      // Admin can do everything
+      allow read, list, update, delete: if isAdmin();
+      
+      // Allow reading specific appointment for confirmation if they know the ID
+      // (Maybe restricted to first 24h of creation or something, but simple ID knowledge is common)
+      allow get: if true; 
+
+      function isValidAppointment(data) {
+        return data.keys().hasAll(['customerName', 'customerPhone', 'barberId', 'serviceId', 'date', 'time', 'status', 'createdAt'])
+          && data.keys().size() == 8
+          && data.customerName is string && data.customerName.size() >= 2 && data.customerName.size() <= 100
+          && data.customerPhone is string && data.customerPhone.size() >= 8 && data.customerPhone.size() <= 20
+          && data.date is string && data.time is string
+          && data.status in ['pending', 'confirmed', 'completed', 'cancelled']
+          && data.createdAt == request.time;
+      }
+    }
+
+    // Admin profiles
+    match /admins/{adminId} {
+      allow read: if isSignedIn() && request.auth.uid == adminId;
+      allow write: if false; // Only manageable via console
+    }
+  }
+}

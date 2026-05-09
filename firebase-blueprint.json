@@ -1,0 +1,75 @@
+{
+  "entities": {
+    "Barber": {
+      "title": "Barber",
+      "description": "Professional barber profile",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "specialty": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "rating": { "type": "number" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["name", "imageUrl"]
+    },
+    "Service": {
+      "title": "Service",
+      "description": "A grooming service offered by the lounge",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "durationMin": { "type": "number" },
+        "price": { "type": "number" },
+        "imageUrl": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "category": { "type": "string" }
+      },
+      "required": ["name", "durationMin", "price", "isActive"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "A booked grooming session",
+      "type": "object",
+      "properties": {
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "barberId": { "type": "string" },
+        "serviceId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "time": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "completed", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerName", "customerPhone", "barberId", "serviceId", "date", "time", "status", "createdAt"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "System administrator",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" }
+      },
+      "required": ["email"]
+    }
+  },
+  "firestore": {
+    "/barbers/{barberId}": {
+      "schema": "Barber",
+      "description": "Collection of barbers"
+    },
+    "/services/{serviceId}": {
+      "schema": "Service",
+      "description": "Catalog of services"
+    },
+    "/appointments/{appointmentId}": {
+      "schema": "Appointment",
+      "description": "Booking records"
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Admin users list"
+    }
+  }
+}
