@@ -26,7 +26,7 @@ export default function CustomerPortal() {
         booked={booking.booked}
       />
 
-      <main id="main-content" className="app-shell py-6 pb-28 md:py-10 md:pb-10" role="main" tabIndex={-1}>
+      <main id="main-content" className="customer-stage app-shell py-6 pb-28 md:py-10 md:pb-10" role="main" tabIndex={-1}>
         <HeroSection settings={booking.settings} serviceCount={booking.services.length} barberCount={booking.barbers.length} />
 
         {booking.isLoading ? (

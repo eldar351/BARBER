@@ -52,7 +52,7 @@ export function BookingHeader({ step, progressStep, selectedStepLabel, booked }:
 
 export function HeroSection({ settings, serviceCount, barberCount }: { settings: BusinessSettings | null; serviceCount: number; barberCount: number }) {
   return (
-    <section className="mb-5 md:mb-6">
+    <section className="mb-5 md:mb-7">
       <AppCard className="hero-stage editorial-shell mx-auto max-w-6xl overflow-hidden p-4 sm:p-5 md:p-7">
         <div className="absolute inset-y-0 left-0 hidden w-1/3 bg-[radial-gradient(circle_at_center,rgba(215,170,118,0.18),transparent_68%)] md:block" aria-hidden="true" />
         <div className="relative grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
@@ -64,6 +64,11 @@ export function HeroSection({ settings, serviceCount, barberCount }: { settings:
               <MetricPill value={serviceCount} label="שירותים" />
               <MetricPill value={barberCount} label="נותני שירות" />
               <MetricPill value="3" label="שלבים פשוטים" />
+            </div>
+            <div className="mt-5 grid gap-2.5 sm:grid-cols-3">
+              <StudioSignal title="זמינות חיה" detail="רק שעות שבאמת פנויות עכשיו" />
+              <StudioSignal title="בחירה מדויקת" detail="שירות, ספר ושעה בלי שיחות" />
+              <StudioSignal title="זרימה קצרה" detail="ברור, מהיר ונוח גם במובייל" />
             </div>
           </div>
           <div className="relative">
@@ -77,6 +82,16 @@ export function HeroSection({ settings, serviceCount, barberCount }: { settings:
               </div>
               <div className="editorial-divider my-5" />
               <p className="text-sm leading-6 text-[#dccfd6]">המסך בנוי למהירות: פחות עומס חזותי, פחות חיכוך, יותר המרות.</p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="glass-chip">
+                  <span className="designer-kicker text-[10px] font-bold uppercase">Studio cue</span>
+                  <p className="mt-1 text-sm text-[#fff2e6]">בחירת התור מרגישה כמו תפריט שירות מדויק, לא טופס כבד.</p>
+                </div>
+                <div className="glass-chip">
+                  <span className="designer-kicker text-[10px] font-bold uppercase">Client side</span>
+                  <p className="mt-1 text-sm text-[#fff2e6]">מובייל קודם, עם CTA ברור וקריאות גבוהה יותר לאורך כל הזרימה.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -124,102 +139,125 @@ export function ServiceStep({
 
   return (
     <motion.div key="service" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="mx-auto max-w-6xl space-y-6">
-      <section className="space-y-5">
-        <SectionHeader title="1. בחר שירות" subtitle="בחר את השירות שמתאים לך." />
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {services.map((service) => {
-            const selected = selectedService?.id === service.id;
-            return (
-              <button
-                key={service.id}
-                onClick={() => handleServiceChoice(service)}
-                className={cn(
-                  'text-right rounded-[28px] editorial-card transition-all hover:-translate-y-0.5',
-                  selected ? 'border-primary-brand ring-1 ring-primary-brand/40 shadow-[0_18px_40px_rgba(185,132,90,0.16)]' : 'hover:border-white/12'
-                )}
-              >
-                <div className="grid sm:grid-cols-[130px_1fr]">
-                  <img src={service.imageUrl} alt={service.name} className="h-28 w-full rounded-t-[28px] object-cover sm:h-full sm:rounded-s-none sm:rounded-e-[28px]" />
-                  <div className="p-4 md:p-5">
-                    <div className="mb-3 flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        {service.category && <p className="mb-2 text-xs font-bold text-[#e7cfb5]">{service.category}</p>}
-                        <h3 className="font-display text-lg text-[#fff6ee] md:text-2xl">{service.name}</h3>
-                        <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#e1d4db]">{service.description}</p>
-                      </div>
-                      {selected && <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-brand"><Check className="h-5 w-5 text-on-primary-brand" /></div>}
-                    </div>
-                    <div className="flex flex-wrap items-center gap-3 text-sm font-bold text-primary-brand">
-                      <span className="inline-flex items-center gap-2"><Clock size={15} /> {service.durationMin} דק׳</span>
-                      <span className="inline-flex items-center gap-2"><Scissors size={15} /> ₪{service.price}</span>
-                    </div>
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="space-y-5">
-        <SectionHeader title="2. בחר נותן שירות" subtitle={selectedService?.barberSelectionMode === 'specific' ? 'מוצגים רק נותני השירות שמתאימים לבחירה שלך.' : 'בחר את נותן השירות המועדף.'} />
-        {!selectedService ? (
-          <SurfacePanel className="p-5 text-center text-sm leading-7 text-[#ddd1d8] md:p-6">בחר קודם שירות כדי לראות את האפשרויות.</SurfacePanel>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {eligibleBarbers.map((barber) => {
-                const selected = selectedBarber?.id === barber.id;
+      <SelectionCheckpoint selectedService={selectedService} selectedBarber={selectedBarber} />
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <div className="space-y-6">
+          <section className="space-y-5">
+            <SectionHeader title="1. בחר שירות" subtitle="בחר את השירות שמתאים לך." />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {services.map((service) => {
+                const selected = selectedService?.id === service.id;
                 return (
                   <button
-                    key={barber.id}
-                    onClick={() => setSelectedBarber(barber)}
+                    key={service.id}
+                    onClick={() => handleServiceChoice(service)}
                     className={cn(
-                      'text-right rounded-[26px] editorial-card p-3.5 transition-all hover:-translate-y-0.5 md:p-4',
-                      selected ? 'border-primary-brand ring-1 ring-primary-brand/40' : 'hover:border-white/12'
+                      'service-spotlight-card text-right rounded-[30px] transition-all hover:-translate-y-0.5',
+                      selected ? 'border-primary-brand ring-1 ring-primary-brand/40 shadow-[0_18px_40px_rgba(185,132,90,0.16)]' : 'hover:border-white/12'
                     )}
                   >
-                    <div className="flex items-center gap-3">
-                      <img src={barber.imageUrl} alt={barber.name} className="h-14 w-14 rounded-2xl border border-outline-brand/20 object-cover" />
-                      <div className="min-w-0 flex-1">
-                        <div className="mb-1 flex items-center justify-between gap-2">
-                          <h3 className="truncate text-base font-bold md:text-lg">{barber.name}</h3>
-                          {selected && <span className="rounded-full border border-primary-brand/18 bg-primary-brand/10 px-2 py-1 text-[11px] font-bold text-[#f0dbc2]">נבחר</span>}
+                    <div className="grid sm:grid-cols-[140px_1fr]">
+                      <img src={service.imageUrl} alt={service.name} className="h-32 w-full rounded-t-[30px] object-cover sm:h-full sm:rounded-s-none sm:rounded-e-[30px]" />
+                      <div className="p-4 md:p-5">
+                        <div className="mb-3 flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="mb-2 flex flex-wrap items-center gap-2">
+                              {service.category && <p className="text-xs font-bold text-[#e7cfb5]">{service.category}</p>}
+                              <span className="rounded-full border border-white/10 bg-white/6 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#f4dfca]">מומלץ</span>
+                            </div>
+                            <h3 className="font-display text-lg text-[#fff6ee] md:text-2xl">{service.name}</h3>
+                            <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#e1d4db]">{service.description}</p>
+                          </div>
+                          {selected && <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-brand"><Check className="h-5 w-5 text-on-primary-brand" /></div>}
                         </div>
-                        <p className="truncate text-sm text-[#ddd1d8]">{barber.specialty || 'ספר מקצועי'}</p>
-                        <div className="mt-1.5 inline-flex items-center gap-1 text-xs text-primary-brand"><Star size={12} fill="currentColor" /> {barber.rating || 5}</div>
+                        <div className="flex flex-wrap items-center gap-2.5 text-sm font-bold text-primary-brand">
+                          <span className="inline-flex items-center gap-2 rounded-full border border-primary-brand/18 bg-primary-brand/10 px-3 py-1.5"><Clock size={15} /> {service.durationMin} דק׳</span>
+                          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[#fff1e5]"><Scissors size={15} /> ₪{service.price}</span>
+                        </div>
                       </div>
                     </div>
                   </button>
                 );
               })}
             </div>
+          </section>
 
-            <div className="editorial-card rounded-3xl p-4 md:p-6">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div className="min-w-0 space-y-2">
-                  <p className="designer-kicker text-[11px] font-bold uppercase">מוכנים להמשיך?</p>
-                  <div className="flex flex-wrap items-center gap-2 text-sm md:text-base">
-                    <span className={cn('font-bold', selectedService ? 'text-primary-brand' : 'text-on-surface-variant')}>{selectedService?.name || 'בחר שירות'}</span>
-                    <span className="text-on-surface-variant">·</span>
-                    <span className={cn(selectedBarber ? 'text-white' : 'text-on-surface-variant')}>{selectedBarber?.name || 'בחר נותן שירות'}</span>
+          <section className="space-y-5">
+            <SectionHeader title="2. בחר נותן שירות" subtitle={selectedService?.barberSelectionMode === 'specific' ? 'מוצגים רק נותני השירות שמתאימים לבחירה שלך.' : 'בחר את נותן השירות המועדף.'} />
+            {!selectedService ? (
+              <SurfacePanel className="p-5 text-center text-sm leading-7 text-[#ddd1d8] md:p-6">בחר קודם שירות כדי לראות את האפשרויות.</SurfacePanel>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  {eligibleBarbers.map((barber) => {
+                    const selected = selectedBarber?.id === barber.id;
+                    return (
+                      <button
+                        key={barber.id}
+                        onClick={() => setSelectedBarber(barber)}
+                        className={cn(
+                          'editorial-card text-right rounded-[28px] p-3.5 transition-all hover:-translate-y-0.5 md:p-4',
+                          selected ? 'border-primary-brand ring-1 ring-primary-brand/40' : 'hover:border-white/12'
+                        )}
+                      >
+                        <div className="flex items-center gap-3">
+                          <img src={barber.imageUrl} alt={barber.name} className="h-16 w-16 rounded-[20px] border border-outline-brand/20 object-cover" />
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-1 flex items-center justify-between gap-2">
+                              <h3 className="truncate text-base font-bold md:text-lg">{barber.name}</h3>
+                              {selected && <span className="rounded-full border border-primary-brand/18 bg-primary-brand/10 px-2 py-1 text-[11px] font-bold text-[#f0dbc2]">נבחר</span>}
+                            </div>
+                            <p className="truncate text-sm text-[#ddd1d8]">{barber.specialty || 'ספר מקצועי'}</p>
+                            <div className="mt-2 flex flex-wrap items-center gap-2">
+                              <div className="inline-flex items-center gap-1 text-xs text-primary-brand"><Star size={12} fill="currentColor" /> {barber.rating || 5}</div>
+                              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#efe1d4]">סטודיו</span>
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="editorial-card rounded-3xl p-4 md:p-6">
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="min-w-0 space-y-2">
+                      <p className="designer-kicker text-[11px] font-bold uppercase">מוכנים להמשיך?</p>
+                      <div className="flex flex-wrap items-center gap-2 text-sm md:text-base">
+                        <span className={cn('font-bold', selectedService ? 'text-primary-brand' : 'text-on-surface-variant')}>{selectedService?.name || 'בחר שירות'}</span>
+                        <span className="text-on-surface-variant">·</span>
+                        <span className={cn(selectedBarber ? 'text-white' : 'text-on-surface-variant')}>{selectedBarber?.name || 'בחר נותן שירות'}</span>
+                      </div>
+                    </div>
+                    <PrimaryButton
+                      onClick={() => {
+                        if (!selectedBarber && eligibleBarbers.length > 0) setSelectedBarber(eligibleBarbers[0]);
+                        if (canContinueToDate) setStep('date');
+                      }}
+                      disabled={!canContinueToDate}
+                      className="w-full px-6 py-4 md:w-auto"
+                    >
+                      המשך לבחירת יום
+                    </PrimaryButton>
                   </div>
                 </div>
-                <PrimaryButton
-                  onClick={() => {
-                    if (!selectedBarber && eligibleBarbers.length > 0) setSelectedBarber(eligibleBarbers[0]);
-                    if (canContinueToDate) setStep('date');
-                  }}
-                  disabled={!canContinueToDate}
-                  className="w-full px-6 py-4 md:w-auto"
-                >
-                  המשך לבחירת יום
-                </PrimaryButton>
-              </div>
+              </>
+            )}
+          </section>
+        </div>
+
+        <div className="space-y-4 xl:sticky xl:top-28 xl:self-start">
+          <SummaryCard selectedBarber={selectedBarber} selectedService={selectedService} selectedTime={null} className="hidden xl:block" />
+          <div className="editorial-card rounded-[28px] p-4 md:p-5">
+            <p className="designer-kicker text-[11px] font-bold uppercase">למה זה מרגיש אחרת</p>
+            <div className="mt-4 space-y-3">
+              <PreviewRow index="A1" title="מיקוד" detail="כל שלב בזרימה עומד בפני עצמו, בלי להעמיס על המסך." />
+              <PreviewRow index="A2" title="ביטחון" detail="המשתמש תמיד רואה מה כבר בחר ומה חסר כדי להמשיך." />
+              <PreviewRow index="A3" title="קצב" detail="המסך בנוי להתקדם מהר, גם ביד אחת במובייל." />
             </div>
-          </>
-        )}
-      </section>
+          </div>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -548,7 +586,48 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle: string })
     </div>
   );
 }
-function SummaryCard({ selectedBarber, selectedService, selectedDate, selectedTime, detailed, className }: { selectedBarber: Barber | null; selectedService: Service | null; selectedDate: Date; selectedTime: string | null; detailed?: boolean; className?: string }) { return <aside className={cn('summary-card h-fit rounded-3xl p-6 shadow-xl', className)}><p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-primary-brand">ההזמנה שלך</p><div className="space-y-4"><SummaryRow icon={<Scissors size={16} />} label="שירות" value={selectedService?.name || 'טרם נבחר'} /><SummaryRow icon={<User size={16} />} label="נותן שירות" value={selectedBarber?.name || 'טרם נבחר'} /><SummaryRow icon={<CalendarIcon size={16} />} label="תאריך" value={selectedService ? formatLongDate(selectedDate) : 'טרם נבחר'} /><SummaryRow icon={<Clock size={16} />} label="שעה" value={selectedTime || 'טרם נבחרה'} /></div>{selectedService && <div className="mt-6 flex items-center justify-between border-t border-outline-brand/20 pt-6"><div><p className="mb-1 text-xs text-[#d8cbd2]">מחיר</p><p className="font-display text-2xl text-primary-brand">₪{selectedService.price}</p></div><div className="text-left"><p className="mb-1 text-xs text-[#d8cbd2]">משך</p><p className="font-bold">{selectedService.durationMin} דק׳</p></div></div>}{detailed && selectedBarber?.imageUrl && <img src={selectedBarber.imageUrl} alt={selectedBarber.name} className="mt-6 h-48 w-full rounded-2xl border border-outline-brand/20 object-cover" />}</aside>; }
+function SummaryCard({ selectedBarber, selectedService, selectedDate, selectedTime, detailed, className }: { selectedBarber: Barber | null; selectedService: Service | null; selectedDate?: Date; selectedTime: string | null; detailed?: boolean; className?: string }) {
+  const completion = [selectedService, selectedBarber, selectedTime].filter(Boolean).length;
+  const completionPercent = Math.round((completion / 3) * 100);
+
+  return (
+    <aside className={cn('summary-card h-fit rounded-3xl p-6 shadow-xl', className)}>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-primary-brand">ההזמנה שלך</p>
+          <h3 className="font-display text-2xl text-[#fff5e9]">מבט אחד על כל הבחירה</h3>
+        </div>
+        <div className="rounded-full border border-primary-brand/18 bg-primary-brand/10 px-3 py-1.5 text-xs font-bold text-[#f0dbc2]">{completionPercent}% הושלם</div>
+      </div>
+
+      <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/7">
+        <div className="h-full rounded-full bg-[linear-gradient(90deg,#e3bf97,#f4debe)] transition-all" style={{ width: `${completionPercent}%` }} />
+      </div>
+
+      <div className="mt-5 space-y-4">
+        <SummaryRow icon={<Scissors size={16} />} label="שירות" value={selectedService?.name || 'טרם נבחר'} />
+        <SummaryRow icon={<User size={16} />} label="נותן שירות" value={selectedBarber?.name || 'טרם נבחר'} />
+        <SummaryRow icon={<CalendarIcon size={16} />} label="תאריך" value={selectedDate && selectedService ? formatLongDate(selectedDate) : 'טרם נבחר'} />
+        <SummaryRow icon={<Clock size={16} />} label="שעה" value={selectedTime || 'טרם נבחרה'} />
+      </div>
+
+      {selectedService && (
+        <div className="mt-6 grid gap-3 border-t border-outline-brand/20 pt-6 sm:grid-cols-2">
+          <div className="rounded-2xl border border-white/7 bg-white/4 p-4">
+            <p className="mb-1 text-xs text-[#d8cbd2]">מחיר</p>
+            <p className="font-display text-2xl text-primary-brand">₪{selectedService.price}</p>
+          </div>
+          <div className="rounded-2xl border border-white/7 bg-white/4 p-4 text-left">
+            <p className="mb-1 text-xs text-[#d8cbd2]">משך</p>
+            <p className="font-bold text-[#fff4ea]">{selectedService.durationMin} דק׳</p>
+          </div>
+        </div>
+      )}
+
+      {detailed && selectedBarber?.imageUrl && <img src={selectedBarber.imageUrl} alt={selectedBarber.name} className="mt-6 h-48 w-full rounded-2xl border border-outline-brand/20 object-cover" />}
+    </aside>
+  );
+}
 function SoftEmptyState({ children }: { children: React.ReactNode }) { return <div className="rounded-2xl border border-outline-brand/14 bg-surface-high/70 p-5 text-center text-sm text-[#ddd1d8]">{children}</div>; }
 function SummaryRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) { return <div className="flex items-center gap-3"><div className="h-10 w-10 shrink-0 rounded-2xl bg-surface-high flex items-center justify-center text-primary-brand">{icon}</div><div className="min-w-0"><p className="text-xs text-on-surface-variant">{label}</p><p className="truncate font-bold">{value}</p></div></div>; }
 function Field({ label, icon, children }: { label: string; icon: React.ReactNode; children: React.ReactNode }) {
@@ -565,6 +644,14 @@ function MetricPill({ value, label }: { value: string | number; label: string })
     </div>
   );
 }
+function StudioSignal({ title, detail }: { title: string; detail: string }) {
+  return (
+    <div className="glass-chip min-h-[88px] justify-center">
+      <p className="text-sm font-bold text-[#fff4ea]">{title}</p>
+      <p className="mt-1 text-sm leading-6 text-[#d7cad2]">{detail}</p>
+    </div>
+  );
+}
 function PreviewRow({ index, title, detail }: { index: string; title: string; detail: string }) {
   return (
     <div className="grid grid-cols-[auto_1fr] items-start gap-3">
@@ -572,6 +659,24 @@ function PreviewRow({ index, title, detail }: { index: string; title: string; de
       <div>
         <p className="text-sm font-bold text-[#fff3e8]">{title}</p>
         <p className="mt-1 text-sm leading-6 text-[#ccbfc8]">{detail}</p>
+      </div>
+    </div>
+  );
+}
+function SelectionCheckpoint({ selectedService, selectedBarber }: { selectedService: Service | null; selectedBarber: Barber | null }) {
+  return (
+    <div className="editorial-card flex flex-col gap-3 rounded-[28px] p-4 md:flex-row md:items-center md:justify-between md:p-5">
+      <div className="min-w-0">
+        <p className="designer-kicker text-[11px] font-bold uppercase">Client journey</p>
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-sm md:text-base">
+          <span className={cn('rounded-full px-3 py-1.5 font-bold', selectedService ? 'bg-primary-brand/12 text-primary-brand' : 'bg-white/5 text-on-surface-variant')}>{selectedService?.name || 'בחר שירות'}</span>
+          <ArrowLeft size={15} className="text-on-surface-variant" />
+          <span className={cn('rounded-full px-3 py-1.5 font-bold', selectedBarber ? 'bg-white/9 text-[#fff4ea]' : 'bg-white/5 text-on-surface-variant')}>{selectedBarber?.name || 'בחר נותן שירות'}</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 text-xs text-[#d8cad2] md:text-sm">
+        <Users size={16} className="text-primary-brand" />
+        ככל שהבחירה ברורה יותר, המעבר ליום ושעה נהיה מיידי יותר.
       </div>
     </div>
   );
