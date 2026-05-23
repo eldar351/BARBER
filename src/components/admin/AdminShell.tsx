@@ -1,14 +1,16 @@
 import React from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, CalendarDays, LayoutDashboard, LogOut, Scissors, Sparkles, Users, ScrollText } from 'lucide-react';
+import { ArrowRight, CalendarDays, LayoutDashboard, LogOut, Scissors, Sparkles, Users, ScrollText, ShieldCheck } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { AppCard, SecondaryButton } from '../ui';
 import { useAdminAuth } from '../../features/admin/auth';
+import { ThemeToggle } from '../../features/theme/theme';
 
 const NAV_ITEMS = [
   { to: '/admin/dashboard', label: 'תורים', mobileLabel: 'תורים', icon: LayoutDashboard },
   { to: '/admin/services', label: 'שירותים', mobileLabel: 'שירותים', icon: Scissors },
   { to: '/admin/barbers', label: 'נותני שירות', mobileLabel: 'צוות', icon: Users },
+  { to: '/admin/users', label: 'מנהלים', mobileLabel: 'מנהלים', icon: ShieldCheck },
   { to: '/admin/logs', label: 'לוגים', mobileLabel: 'לוגים', icon: ScrollText },
 ];
 
@@ -31,7 +33,7 @@ export function AdminShell({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAdminAuth();
+  const { admin, logout } = useAdminAuth();
 
   const handleLogout = () => {
     logout();
@@ -39,7 +41,7 @@ export function AdminShell({
   };
 
   return (
-    <div className="admin-stage admin-grid min-h-ios-screen overflow-hidden bg-background text-[#eadfee]" dir="rtl">
+    <div className="admin-stage admin-grid min-h-ios-screen overflow-hidden bg-background text-[var(--color-page-foreground)]" dir="rtl">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[380px] bg-[radial-gradient(circle_at_top,rgba(228,178,118,0.08),transparent_48%)]" />
       <div className="mx-auto max-w-7xl px-3 py-3 pb-24 sm:px-4 md:px-6 md:py-8 md:pb-8">
         <header className="mb-4 pt-safe md:mb-6">
@@ -72,7 +74,16 @@ export function AdminShell({
                     התנתקות
                   </SecondaryButton>
                 </nav>
-                {actions && <div className="flex w-full flex-col gap-2 sm:flex-row xl:w-auto xl:justify-end">{actions}</div>}
+                <div className="flex w-full flex-col gap-2 sm:flex-row xl:w-auto xl:items-center xl:justify-end">
+                  {admin?.email ? (
+                    <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs font-bold text-[#f4e7da]">
+                      <ShieldCheck size={14} className="text-primary-brand" />
+                      {admin.email}
+                    </div>
+                  ) : null}
+                  <ThemeToggle />
+                  {actions}
+                </div>
               </div>
             </div>
           </AppCard>
@@ -113,7 +124,7 @@ export function AdminShell({
       </div>
 
       <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-outline-brand/20 bg-surface-highest/95 px-3 px-safe py-3 pb-safe backdrop-blur md:hidden" aria-label="ניווט ניהול תחתון">
-        <div className="mx-auto grid max-w-7xl grid-cols-5 gap-2">
+        <div className="mx-auto grid max-w-7xl grid-cols-6 gap-2">
           {NAV_ITEMS.map((item) => (
             <div key={item.to}>
               <MobileNavButton to={item.to} label={item.mobileLabel} icon={<item.icon size={18} />} active={location.pathname === item.to} />

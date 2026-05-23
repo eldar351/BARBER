@@ -1,16 +1,20 @@
 import { PublicAccessibilityFooter } from '../components/accessibility';
 import { AppCard } from '../components/ui';
+import { ThemeToggle } from '../features/theme/theme';
 
 export default function AccessibilityStatement() {
   const updatedAt = new Date().toLocaleDateString('he-IL', { year: 'numeric', month: 'long', day: 'numeric' });
 
   return (
-    <div className="min-h-ios-screen bg-background text-[#eadfee]" dir="rtl">
+    <div className="min-h-ios-screen bg-background text-[var(--color-page-foreground)]" dir="rtl">
       <main id="main-content" className="app-shell py-6 md:py-10" role="main" tabIndex={-1}>
         <AppCard className="editorial-shell mx-auto max-w-4xl p-5 md:p-8">
           <article lang="he" dir="rtl" className="space-y-6">
             <header className="space-y-3">
-              <p className="designer-kicker text-[11px] font-bold uppercase">ACCESSIBILITY</p>
+              <div className="flex items-center justify-between gap-3">
+                <p className="designer-kicker text-[11px] font-bold uppercase">ACCESSIBILITY</p>
+                <ThemeToggle />
+              </div>
               <h1 className="font-display text-3xl text-[#fff5eb] md:text-4xl">הצהרת נגישות</h1>
               <p className="max-w-3xl text-sm leading-7 text-[#ddd1d8] md:text-base">
                 מערכת BARBER מחויבת לשיפור נגישות השירות הדיגיטלי עבור כלל המשתמשים, בהתאם לעקרונות התקן הישראלי 5568

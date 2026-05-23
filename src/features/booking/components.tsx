@@ -7,6 +7,7 @@ import { cn } from '../../lib/utils';
 import { AppCard, PrimaryButton, SurfacePanel, TextInput } from '../../components/ui';
 import { BookingStep, DateAvailability, Slot } from './types';
 import { formatLongDate, formatShortDate, formatShortWeekday, getDateStateText, sameDay } from './utils';
+import { ThemeToggle } from '../theme/theme';
 
 export function BookingHeader({ step, progressStep, selectedStepLabel, booked }: { step: BookingStep; progressStep: number; selectedStepLabel: string; booked: boolean }) {
   const steps = [
@@ -23,20 +24,24 @@ export function BookingHeader({ step, progressStep, selectedStepLabel, booked }:
             <p className="designer-kicker text-[11px] font-bold uppercase">BARBER STUDIO</p>
             <h1 className="font-display text-xl text-[#f5e6d5] md:text-2xl">{step === 'date' ? 'מתי נתראה?' : step === 'confirm' ? 'אישור פרטים' : 'זימון תורים'}</h1>
           </div>
-          <nav className="hidden md:flex items-center gap-4" aria-label="התקדמות הזמנה">
-            <Link to="/cancel" className="text-sm font-bold text-[#d8c9d3] transition-colors hover:text-primary-brand">ביטול תור</Link>
-            {steps.map((item, index) => (
-              <React.Fragment key={item.key}>
-                {index > 0 && <div className="h-px w-6 bg-outline-brand" />}
-                <StepBullet active={step === item.key} done={progressStep > index + 1 || (item.key === 'confirm' && booked)} label={item.label} num={index + 1} />
-              </React.Fragment>
-            ))}
-          </nav>
+          <div className="hidden items-center gap-3 md:flex">
+            <ThemeToggle />
+            <nav className="flex items-center gap-4" aria-label="התקדמות הזמנה">
+              <Link to="/cancel" className="text-sm font-bold text-[#d8c9d3] transition-colors hover:text-primary-brand">ביטול תור</Link>
+              {steps.map((item, index) => (
+                <React.Fragment key={item.key}>
+                  {index > 0 && <div className="h-px w-6 bg-outline-brand" />}
+                  <StepBullet active={step === item.key} done={progressStep > index + 1 || (item.key === 'confirm' && booked)} label={item.label} num={index + 1} />
+                </React.Fragment>
+              ))}
+            </nav>
+          </div>
         </div>
         <div className="mt-4 md:hidden">
-          <div className="mb-3 flex items-center justify-between text-[11px] font-bold text-[#ddd1d8]">
+          <div className="mb-3 flex items-center justify-between gap-3 text-[11px] font-bold text-[#ddd1d8]">
             <span>שלב {progressStep} מתוך 3</span>
             <div className="flex items-center gap-3">
+              <ThemeToggle />
               <Link to="/cancel" className="text-primary-brand">ביטול תור</Link>
               <span>{selectedStepLabel}</span>
             </div>

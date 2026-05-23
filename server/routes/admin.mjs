@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.mjs';
 import { asyncRoute, parseWith } from '../http.mjs';
-import { appointmentSchema, appointmentStatusSchema, appointmentUpdateSchema, loginSchema, serviceSchema, barberSchema, settingsSchema, systemLogsQuerySchema } from '../validation.mjs';
+import { adminUserSchema, appointmentSchema, appointmentStatusSchema, appointmentUpdateSchema, loginSchema, serviceSchema, barberSchema, settingsSchema, systemLogsQuerySchema } from '../validation.mjs';
 import { loginAdmin } from '../services/authService.mjs';
 import { createNewAppointment, listAdminAppointments, changeAppointmentStatus, rejectAppointmentCancellationRequest, updateExistingAppointment } from '../services/appointmentService.mjs';
 import { listServices, createService, updateService, deleteService } from '../repositories/serviceRepo.mjs';
@@ -9,6 +9,7 @@ import { listBarbers, createBarber, updateBarber, deleteBarber } from '../reposi
 import { getSettings, updateSettings } from '../repositories/settingsRepo.mjs';
 import { listSystemLogs, logInfo, logWarn } from '../services/logService.mjs';
 import { getRequestMeta } from '../requestContext.mjs';
+import { createAdmin, deleteAdmin, findAdminById, listAdmins } from '../repositories/adminRepo.mjs';
 
 export const adminRouter = Router();
 
@@ -34,6 +35,60 @@ adminRouter.post('/login', asyncRoute(async (req, res) => {
 adminRouter.get('/me', requireAuth, (req, res) => {
   res.json({ admin: req.admin });
 });
+
+adminRouter.get('/admins', requireAuth, asyncRoute(async (_req, res) => {
+  res.json(await listAdmins());
+}));
+
+adminRouter.post('/admins', requireAuth, asyncRoute(async (req, res) => {
+  const parsed = parseWith(adminUserSchema, req.body);
+  if (!parsed.ok) return res.status(400).json({ error: parsed.error, issues: parsed.issues });
+  const result = await createAdmin(parsed.data);
+  if (!result.ok) return res.status(409).json({ error: 'כתובת האימייל הזו כבר קיימת במערכת.' });
+  logInfo('auth.admins', 'Admin user created', {
+    ...getRequestMeta(req),
+    actorAdminId: req.admin?.id,
+    actorEmail: req.admin?.email,
+    createdAdminEmail: parsed.data.email,
+    createdAdminId: result.id,
+  });
+  res.status(201).json({ id: result.id });
+}));
+
+adminRouter.delete('/admins/:id', requireAuth, asyncRoute(async (req, res) => {
+  const targetId = Number(req.params.id);
+  if (!Number.isFinite(targetId) || targetId <= 0) {
+    return res.status(400).json({ error: 'מזהה מנהל לא תקין.' });
+  }
+  if (Number(req.admin?.id) === targetId) {
+    return res.status(400).json({ error: 'לא ניתן למחוק את המשתמש שמחובר כרגע.' });
+  }
+
+  const target = await findAdminById(targetId);
+  if (!target) {
+    return res.status(404).json({ error: 'משתמש המנהל לא נמצא.' });
+  }
+
+  const admins = await listAdmins();
+  if (admins.length <= 1) {
+    return res.status(400).json({ error: 'חייב להישאר לפחות משתמש מנהל אחד במערכת.' });
+  }
+
+  const deleted = await deleteAdmin(targetId);
+  if (!deleted) {
+    return res.status(404).json({ error: 'משתמש המנהל לא נמצא.' });
+  }
+
+  logInfo('auth.admins', 'Admin user deleted', {
+    ...getRequestMeta(req),
+    actorAdminId: req.admin?.id,
+    actorEmail: req.admin?.email,
+    deletedAdminId: target.id,
+    deletedAdminEmail: target.email,
+  });
+
+  res.json({ ok: true });
+}));
 
 adminRouter.get('/appointments', requireAuth, asyncRoute(async (_req, res) => {
   res.json(await listAdminAppointments());

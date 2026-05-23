@@ -41,6 +41,11 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+export const adminUserSchema = z.object({
+  email: z.string().trim().email('יש להזין כתובת אימייל תקינה.').max(160, 'האימייל ארוך מדי.'),
+  password: z.string().min(8, 'הסיסמה חייבת להכיל לפחות 8 תווים.').max(128, 'הסיסמה ארוכה מדי.'),
+});
+
 export const appointmentSchema = z.object({
   customerName: z.string().trim().min(2, 'יש להזין שם מלא.').max(100, 'השם ארוך מדי.'),
   customerPhone: z.string().trim().min(8, 'יש להזין מספר טלפון תקין.').max(20, 'מספר הטלפון ארוך מדי.'),

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom
 import { SkipLink } from './components/accessibility';
 import { ToastProvider } from './components/toast';
 import { AdminAuthProvider, AdminGuestRoute, ProtectedAdminRoute } from './features/admin/auth';
+import { ThemeProvider } from './features/theme/theme';
 import { AppErrorBoundary, GlobalErrorMonitor } from './components/ErrorBoundary.jsx';
 import { AppCard } from './components/ui';
 
@@ -14,36 +15,40 @@ const AdminLogin = lazy(() => import('./pages/AdminPortal/Login'));
 const ServicesManagement = lazy(() => import('./pages/AdminPortal/Services'));
 const BarbersManagement = lazy(() => import('./pages/AdminPortal/Barbers'));
 const SystemLogsPage = lazy(() => import('./pages/AdminPortal/Logs'));
+const AdminUsersPage = lazy(() => import('./pages/AdminPortal/AdminUsers'));
 
 export default function App() {
   return (
     <AppErrorBoundary>
-      <ToastProvider>
-        <GlobalErrorMonitor />
-        <BrowserRouter>
-          <SkipLink />
-          <Routes>
-            <Route path="/" element={<SuspendedPage><CustomerPortal /></SuspendedPage>} />
-            <Route path="/book" element={<SuspendedPage><CustomerPortal /></SuspendedPage>} />
-            <Route path="/cancel" element={<SuspendedPage><CustomerCancellation /></SuspendedPage>} />
-            <Route path="/accessibility-statement" element={<SuspendedPage><AccessibilityStatement /></SuspendedPage>} />
+      <ThemeProvider>
+        <ToastProvider>
+          <GlobalErrorMonitor />
+          <BrowserRouter>
+            <SkipLink />
+            <Routes>
+              <Route path="/" element={<SuspendedPage><CustomerPortal /></SuspendedPage>} />
+              <Route path="/book" element={<SuspendedPage><CustomerPortal /></SuspendedPage>} />
+              <Route path="/cancel" element={<SuspendedPage><CustomerCancellation /></SuspendedPage>} />
+              <Route path="/accessibility-statement" element={<SuspendedPage><AccessibilityStatement /></SuspendedPage>} />
 
-            <Route element={<AdminAuthLayout />}>
-              <Route element={<AdminGuestRoute />}>
-                <Route path="/admin/login" element={<SuspendedPage><AdminLogin /></SuspendedPage>} />
+              <Route element={<AdminAuthLayout />}>
+                <Route element={<AdminGuestRoute />}>
+                  <Route path="/admin/login" element={<SuspendedPage><AdminLogin /></SuspendedPage>} />
+                </Route>
+                <Route element={<ProtectedAdminRoute />}>
+                  <Route path="/admin/dashboard" element={<SuspendedPage><AdminDashboard /></SuspendedPage>} />
+                  <Route path="/admin/services" element={<SuspendedPage><ServicesManagement /></SuspendedPage>} />
+                  <Route path="/admin/barbers" element={<SuspendedPage><BarbersManagement /></SuspendedPage>} />
+                  <Route path="/admin/logs" element={<SuspendedPage><SystemLogsPage /></SuspendedPage>} />
+                  <Route path="/admin/users" element={<SuspendedPage><AdminUsersPage /></SuspendedPage>} />
+                </Route>
               </Route>
-              <Route element={<ProtectedAdminRoute />}>
-                <Route path="/admin/dashboard" element={<SuspendedPage><AdminDashboard /></SuspendedPage>} />
-                <Route path="/admin/services" element={<SuspendedPage><ServicesManagement /></SuspendedPage>} />
-                <Route path="/admin/barbers" element={<SuspendedPage><BarbersManagement /></SuspendedPage>} />
-                <Route path="/admin/logs" element={<SuspendedPage><SystemLogsPage /></SuspendedPage>} />
-              </Route>
-            </Route>
 
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
-      </ToastProvider>
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </BrowserRouter>
+        </ToastProvider>
+      </ThemeProvider>
     </AppErrorBoundary>
   );
 }
@@ -62,7 +67,7 @@ function SuspendedPage({ children }: { children: ReactNode }) {
 
 function RouteLoader() {
   return (
-    <div className="min-h-ios-screen bg-background p-4 pt-safe text-[#eadfee]" dir="rtl">
+    <div className="min-h-ios-screen bg-background p-4 pt-safe text-[var(--color-page-foreground)]" dir="rtl">
       <div className="mx-auto flex min-h-ios-screen max-w-xl items-center justify-center" role="status" aria-live="polite">
         <AppCard className="w-full max-w-md p-6 text-center text-on-surface-variant">
           טוען את המסך...

@@ -5,6 +5,7 @@ import { ShieldAlert, Mail, Lock, Eye, EyeOff, ShieldCheck, ArrowLeft, Sparkles,
 import { api } from '../../lib/api';
 import { AppCard, PrimaryButton, TextInput } from '../../components/ui';
 import { useAdminAuth } from '../../features/admin/auth';
+import { ThemeToggle } from '../../features/theme/theme';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -40,10 +41,13 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-ios-screen relative overflow-hidden bg-background px-4 pb-8 pt-safe text-[#eadfee] sm:px-6 sm:pb-10" dir="rtl">
+    <div className="min-h-ios-screen relative overflow-hidden bg-background px-4 pb-8 pt-safe text-[var(--color-page-foreground)] sm:px-6 sm:pb-10" dir="rtl">
       <div className="absolute left-0 top-0 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-container/10 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 h-[600px] w-[600px] translate-x-1/3 translate-y-1/3 rounded-full bg-primary-brand/5 blur-[150px] pointer-events-none" />
       <div className="absolute inset-x-0 top-0 h-[320px] bg-[radial-gradient(circle_at_top,rgba(228,178,118,0.1),transparent_52%)] pointer-events-none" />
+      <div className="absolute right-4 top-[calc(env(safe-area-inset-top,0px)+1rem)] z-20">
+        <ThemeToggle />
+      </div>
 
       <main id="main-content" className="relative z-10 mx-auto flex min-h-ios-screen max-w-6xl items-center justify-center" role="main" tabIndex={-1}>
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="grid w-full max-w-5xl gap-5 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1fr)] lg:items-stretch">

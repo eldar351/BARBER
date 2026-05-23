@@ -18,7 +18,7 @@ export default function CustomerPortal() {
   }
 
   return (
-    <div className="min-h-ios-screen bg-background text-[#eadfee] font-sans" dir="rtl">
+    <div className="min-h-ios-screen bg-background text-[var(--color-page-foreground)] font-sans" dir="rtl">
       <BookingHeader
         step={booking.step}
         progressStep={booking.progressStep}

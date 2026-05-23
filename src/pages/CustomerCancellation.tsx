@@ -5,18 +5,22 @@ import React, { type ReactNode, useId } from 'react';
 import { PublicAccessibilityFooter } from '../components/accessibility';
 import { AppCard, PrimaryButton, SecondaryButton, TextInput } from '../components/ui';
 import { useCancellationFlow } from '../features/booking/useCancellationFlow';
+import { ThemeToggle } from '../features/theme/theme';
 
 export default function CustomerCancellation() {
   const cancellation = useCancellationFlow();
 
   return (
-    <div className="min-h-ios-screen bg-background text-[#eadfee]" dir="rtl">
+    <div className="min-h-ios-screen bg-background text-[var(--color-page-foreground)]" dir="rtl">
       <main id="main-content" className="app-shell py-6 pb-12 md:py-10" role="main" tabIndex={-1}>
         <section className="mb-6">
           <AppCard className="hero-stage editorial-shell overflow-hidden p-5 md:p-8">
             <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
               <div>
-                <div className="luxury-label text-[11px]"><ShieldCheck size={14} /> ביטול תור מאובטח</div>
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div className="luxury-label text-[11px]"><ShieldCheck size={14} /> ביטול תור מאובטח</div>
+                  <ThemeToggle />
+                </div>
                 <h1 className="mt-5 font-display text-[2rem] leading-[1.02] text-[#fff5eb] md:text-[3.2rem]">בקשת ביטול עם קוד אימות למייל</h1>
                 <p className="mt-4 max-w-2xl text-sm leading-7 text-[#e5d8df] md:text-lg md:leading-8">
                   מזינים טלפון ואימייל, מקבלים קוד בן 4 ספרות, ולאחר האימות בקשת הביטול עוברת לאישור אדמין.

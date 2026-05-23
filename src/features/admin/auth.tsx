@@ -115,7 +115,7 @@ export function AdminGuestRoute() {
 
 function AdminAuthLoadingScreen() {
   return (
-    <div className="min-h-ios-screen bg-background p-4 pt-safe text-[#eadfee]" dir="rtl">
+    <div className="min-h-ios-screen bg-background p-4 pt-safe text-[var(--color-page-foreground)]" dir="rtl">
       <div className="mx-auto flex min-h-ios-screen max-w-xl items-center justify-center">
         <AppCard className="w-full max-w-md p-6 text-center text-on-surface-variant">
           בודק הרשאת מנהל...
