@@ -46,6 +46,7 @@ export function ServiceEditorCard({
           <button
             type="button"
             onClick={onCancel}
+            aria-label="סגירת עורך השירות"
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-outline-brand/16 hover:border-primary-brand"
           >
             <X size={18} />
@@ -242,6 +243,7 @@ export function ServiceList({
                 </button>
                 <button
                   onClick={() => onDelete(service.id)}
+                  aria-label={`מחיקת השירות ${service.name}`}
                   className="flex h-12 w-full items-center justify-center rounded-2xl border border-outline-brand/20 transition-all hover:border-red-500 hover:text-red-400 sm:w-12"
                 >
                   <Trash2 size={16} />
